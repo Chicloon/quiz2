@@ -4,7 +4,7 @@ console.log("----- ");
 console.log(" run bot ");
 console.log("----- ");
 
-export default async function TgBot() {
+export default function TgBot() {
   const token = "5638005581:AAFfqLFFPbmQiHvGtEZ-yr67bFNkdDU1lrQ";
   const bot = new TelegramApi(token, { polling: true });
 
