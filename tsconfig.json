@@ -37,9 +37,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts",
-    "src/bot.js",
-    "scripts/build.mjs",
-    "api/webhook.mjs",
   ],
   "exclude": ["node_modules"],
 }
