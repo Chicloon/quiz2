@@ -1,4 +1,4 @@
-import { bot } from "../src/bot";
+import { bot } from "../src/bot.js";
 import { webhookCallback } from "grammy";
 
 // webhookCallback will make sure that the correct middleware(listener) function is called
