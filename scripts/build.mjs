@@ -1,9 +1,30 @@
-import { bot } from "../src/bot.js";
+import {getURL} from "vercel-grammy";
+import {bot, secretToken} from "../src/bot.mjs";
 
-const {
-  VERCEL_URL: host,
-  // set your webhook address or use default Vercel deployment url
-  WEBHOOK: webhook = `https://${host}/api/webhook`,
-} = process.env;
+const {VERCEL_ENV} = process.env;
 
-void bot.api.setWebhook(webhook);
+// List of allowed environments
+const allowedEnvs = [
+    "production",
+    // "preview"
+];
+
+// Exit in case of unsuitable environments
+if (!allowedEnvs.includes(VERCEL_ENV)) process.exit();
+
+// Webhook URL generation
+const url = getURL({path: "api/update"});
+
+// Webhook setup options
+const options = {secret_token: secretToken};
+
+// Installing a webhook
+if (await bot.api.setWebhook(url, options)) {
+
+    // Checking the webhook installation
+    const {url} = await bot.api.getWebhookInfo();
+
+    console.info("Webhook set to URL:", url);
+    console.info("Secret token:", secretToken);
+
+}

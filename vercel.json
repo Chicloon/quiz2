@@ -1,5 +1,4 @@
 {
-  "outputDirectory": ".",
   "installCommand": "npm i --omit=dev",
-  "buildCommand": "next build && node scripts/build.mjs"
+  "buildCommand": "node scripts/build.mjs && next build"
 }
