@@ -31,4 +31,4 @@ export default function RootLayout({
   );
 }
 
-await tgBot()
+// await tgBot()

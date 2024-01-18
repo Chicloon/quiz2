@@ -22,6 +22,7 @@
     "@trpc/react-query": "^10.43.6",
     "@trpc/server": "^10.43.6",
     "daisyui": "^2.51.5",
+    "grammy": "^1.20.3",
     "lodash": "^4.17.21",
     "mobx": "^6.3.0",
     "mobx-react-lite": "^3.2.0",
