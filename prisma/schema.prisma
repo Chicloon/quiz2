@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+}
+
+model Example {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Post {
+    id        Int      @id @default(autoincrement())
+    name      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    @@index([name])
+}
+
+// Necessary for Next auth
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    user_id                  Int?
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? @db.Text
+    access_token             String? @db.Text
+    refresh_token_expires_in Int?
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    email                    String?
+    id_token                 String? @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+model User {
+    id            String          @id @default(cuid())
+    name          String?
+    email         String?         @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    groups        GroupsOnUsers[]
+    owner         Group[]         @relation("Owner")
+    Post          Post[]
+}
+
+model Group {
+    id       String          @id @default(cuid())
+    owner    User?           @relation("Owner", fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId  String?
+    users    GroupsOnUsers[]
+    name     String
+    parentId String?
+    children Group[]         @relation("ParentChildren")
+    parent   Group?          @relation("ParentChildren", fields: [parentId], references: [id], onDelete: Cascade)
+    quizez   Quiz[]
+}
+
+model GroupsOnUsers {
+    user    User   @relation(fields: [userId], references: [id])
+    userId  String
+    group   Group  @relation(fields: [groupId], references: [id])
+    groupId String
+
+    @@id([userId, groupId])
+}
+
+model Quiz {
+    id         String      @id @default(cuid())
+    title      String
+    createdAt  DateTime    @default(now())
+    updatedAt  DateTime    @updatedAt
+    questions  Question[]
+    applicants Applicant[]
+    groupId    String?
+    group      Group?      @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+    id          String   @id @default(cuid())
+    description String
+    order       Int
+    score       Int
+    quizId      String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+    answers     Answer[]
+}
+
+model Answer {
+    id         String    @id @default(cuid())
+    questionId String?
+    order      Int
+    text       String
+    isCorrect  Boolean
+    question   Question? @relation(fields: [questionId], references: [id])
+    replies    Reply[]
+}
+
+model Reply {
+    id           String    @id @default(cuid())
+    createdAt    DateTime  @default(now())
+    applicantId  String
+    applicant    Applicant @relation(fields: [applicantId], references: [id])
+    answerId     String
+    answer       Answer    @relation(fields: [answerId], references: [id])
+    answerNumber Int
+}
+
+model Applicant {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    name      String
+    replies   Reply[]
+    quizId    String
+    quiz      Quiz     @relation(fields: [quizId], references: [id])
+}

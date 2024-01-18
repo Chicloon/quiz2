@@ -1,19 +1,16 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type DefaultSession,
   type NextAuthOptions,
+  type DefaultSession,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import VKProvider from "next-auth/providers/vk";
-import DiscordProvider from "next-auth/providers/discord";
-
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env";
 import { db } from "~/server/db";
-
-console.log("--- auth---");
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -43,51 +40,46 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+        // session.user.role = user.role; <-- put other properties on the session here
+      }
+      return session;
+    },
   },
   adapter: PrismaAdapter(db),
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        console.log("credentials", credentials);
-        // const res = await console.log(credentials);
-        const user = { id: "1", name: "bob", email: "bob@bob.com" };
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   credentials: {
+    //     username: { label: "Username", type: "text", placeholder: "jsmith" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   async authorize(credentials, req) {
+    //     console.log("credentials", credentials);
+    //     // const res = await console.log(credentials);
+    //     const user = { id: "1", name: "bob", email: "bob@bob.com" };
 
-        if (user) {
-          console.log("got user", user);
-          return user;
-        }
-        return null;
-      },
-    }),
+    //     if (user) {
+    //       console.log("got user", user);
+    //       return user;
+    //     }
+    //     return null;
+    //   },
+    // }),
     GitHubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-    VKProvider({
-      clientId: env.VK_CLIENT_ID,
-      clientSecret: env.VK_CLIENT_SECRET,
-    }),
-
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
+    // GoogleProvider({
+    //   clientId: env.GOOGLE_CLIENT_ID,
+    //   clientSecret: env.GOOGLE_CLIENT_SECRET,
+    // }),
+    // VKProvider({
+    //   clientId: env.VK_CLIENT_ID,
+    //   clientSecret: env.VK_CLIENT_SECRET,
+    // }),
     /**
      * ...add more providers here.
      *
@@ -105,4 +97,9 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = () => getServerSession(authOptions);
+export const getServerAuthSession = (ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) => {
+  return getServerSession(ctx.req, ctx.res, authOptions);
+};
