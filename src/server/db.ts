@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 import { env } from "~/env";
 
-console.log(" ---- db  is here ----");
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };

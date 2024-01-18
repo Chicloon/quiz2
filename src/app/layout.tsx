@@ -1,10 +1,9 @@
 import "~/styles/globals.css";
-import tgBot from './tlg'
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
-await tgBot()
+import tgBot from './tlg'
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -31,3 +30,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+await tgBot()
