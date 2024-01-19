@@ -7,5 +7,5 @@ export const bot = new Bot(token);
 
 // attach all middleware
 bot.on("message", async (ctx) => {
-  await ctx.reply("Hi there!");
+  await ctx.reply("Hi there!!!");
 });
