@@ -1,4 +1,0 @@
-{
-  "installCommand": "npm i",
-  "buildCommand": "node scripts/build.mjs && next build"
-}
