@@ -50,36 +50,36 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(db),
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        console.log("credentials", credentials);
-        // const res = await console.log(credentials);
-        const user = { id: "1", name: "bob", email: "bob@bob.com" };
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   credentials: {
+    //     username: { label: "Username", type: "text", placeholder: "jsmith" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   async authorize(credentials, req) {
+    //     console.log("credentials", credentials);
+    //     // const res = await console.log(credentials);
+    //     const user = { id: "1", name: "bob", email: "bob@bob.com" };
 
-        if (user) {
-          console.log("got user", user);
-          return user;
-        }
-        return null;
-      },
-    }),
+    //     if (user) {
+    //       console.log("got user", user);
+    //       return user;
+    //     }
+    //     return null;
+    //   },
+    // }),
     GitHubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-    VKProvider({
-      clientId: env.VK_CLIENT_ID,
-      clientSecret: env.VK_CLIENT_SECRET,
-    }),
+    // GoogleProvider({
+    //   clientId: env.GOOGLE_CLIENT_ID,
+    //   clientSecret: env.GOOGLE_CLIENT_SECRET,
+    // }),
+    // VKProvider({
+    //   clientId: env.VK_CLIENT_ID,
+    //   clientSecret: env.VK_CLIENT_SECRET,
+    // }),
 
     /**
      * ...add more providers here.
