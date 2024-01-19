@@ -1,6 +1,6 @@
 import { Bot } from "grammy";
 
-const { BOT_TOKEN: token = "" } = process.env;
+const { BOT_TOKEN: token = "token" } = process.env;
 
 // Set your token in the vercel environment variable
 export const bot = new Bot(token);
